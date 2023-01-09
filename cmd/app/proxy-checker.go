@@ -38,7 +38,11 @@ func main() {
 
 	wg.Wait()
 
-	checkedProxies.Save(outputFileName)
+	if len(checkedProxies.List) > 0 {
+		checkedProxies.Save(outputFileName)
+	} else {
+		log.Println("All proxies is dead =(")
+	}
 }
 
 func runCheck(list []proxy.Proxy) {
