@@ -1,4 +1,4 @@
-package pkg
+package proxy
 
 import (
 	"fmt"
@@ -14,6 +14,7 @@ type Proxy struct {
 	Ip        string `json:"ip"`
 	Port      uint   `json:"port"`
 	Protocol  string `json:"protocol"`
+	Country   string `json:"country"`
 	IsWorking bool   `json:"is_working"`
 }
 

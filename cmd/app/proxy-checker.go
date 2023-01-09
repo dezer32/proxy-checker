@@ -2,30 +2,33 @@ package main
 
 import (
 	"flag"
-	"github.com/dezer32/proxy-checker/pkg"
+	"fmt"
+	"github.com/dezer32/proxy-checker/pkg/proxy"
 	"github.com/gookit/ini/v2"
 	"log"
 	"sync"
+	"time"
 )
 
 var (
 	wg             = sync.WaitGroup{}
-	pCh            = make(chan pkg.Proxy)
-	checkedProxies = pkg.Proxies{}
+	pCh            = make(chan proxy.Proxy)
+	checkedProxies = proxy.Proxies{}
 
 	inputFileName, outputFileName string
 )
 
 func init() {
+	defaultOutputFileName := fmt.Sprintf("proxies.checked.%d.json", time.Now().Unix())
 	flag.StringVar(&inputFileName, "i", "proxies.json", "Path to file with proxies.")
-	flag.StringVar(&outputFileName, "o", "proxies.checked.json", "Path to file with checked json.")
+	flag.StringVar(&outputFileName, "o", defaultOutputFileName, "Path to file with checked json.")
 	flag.Parse()
 
 	loadConfig()
 }
 
 func main() {
-	proxies := pkg.Proxies{}
+	proxies := proxy.Proxies{}
 	proxies.Load(inputFileName)
 	wg.Add(len(proxies.List))
 
@@ -37,9 +40,9 @@ func main() {
 	checkedProxies.Save(outputFileName)
 }
 
-func runCheck(list []pkg.Proxy) {
+func runCheck(list []proxy.Proxy) {
 	for _, p := range list {
-		go func(proxy pkg.Proxy, pCh chan pkg.Proxy) {
+		go func(proxy proxy.Proxy, pCh chan proxy.Proxy) {
 			defer wg.Done()
 			proxy.HealthCheck()
 			if proxy.IsWorking {
