@@ -2,8 +2,6 @@ module github.com/dezer32/proxy-checker
 
 go 1.19
 
-retract v1.0.0
-
 require github.com/gookit/ini/v2 v2.1.3
 
 require (

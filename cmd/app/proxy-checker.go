@@ -11,6 +11,7 @@ import (
 )
 
 var (
+	mutex          = sync.Mutex{}
 	wg             = sync.WaitGroup{}
 	pCh            = make(chan proxy.Proxy)
 	checkedProxies = proxy.Proxies{}
@@ -62,7 +63,9 @@ func consumeChecked() {
 	//timeoutCh := time.After(d * 2)
 
 	for p := range pCh {
+		mutex.Lock()
 		checkedProxies.List = append(checkedProxies.List, p)
+		mutex.Unlock()
 		wg.Done()
 	}
 }
